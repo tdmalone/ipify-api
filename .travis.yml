@@ -4,12 +4,30 @@ go:
   - 1.8
 
 before_script:
+ - go get github.com/GeertJohan/fgt
+ - go get golang.org/x/lint/golint
  - go get github.com/mitchellh/gox
 
 script:
- - go vet *.go
- - go vet api/*.go
+
+  # Experimenting with different ways of linting and standards checking on Go projects.
+ - fgt go vet *.go
+ - fgt go vet api/*.go
+ - fgt golint *.go
+ - fgt golint api/*.go
+ - fgt go fmt *.go
+ - fgt go fmt api/*.go
+
  - go build
 
 after_success:
  - gox -osarch="linux/amd64" && echo $TRAVIS_TEST_RESULT
+
+notifications:
+  email: false
+  webhooks:
+    urls: https://api.tm.id.au/v2/travis/jobStatus
+  slack:
+    on_start: always
+    rooms:
+      - secure: cwqtJB5Hk07bfn3OWYnB+Bv2wQNRWWFdP76+WuHQQECSGh4YfXtCGjQjxXde79wrfOs2KN9wmJhFxwip/K9lE4uX8ImWGTtlCqXVMLrqz+mw0n9odUOfHPXz4RGlbPH5BYo9dmjDvEsLN2Iq9zSKiF33qGuAmkAbSmg9EXwUFvZeQKmiSSlO571/zi9ViTEb1gEN7EOm9lcA2+ry50oR8XXuqvRNW8MgmyqISFiGX2Nc2a0sMN1qLVY0rjprov73nNISVkVDSRADdVXe9mqSG/DRnNNzMvkdX0Pwr8+fTKUry4hE4UBBHJWHt2DdsMyYIr5KKRWXSuakYyhx53NGAvaWUdV9cS31/jvGquEb2gsoWuCXYwMUWGmCwKADfjmFogNQ0zVls/oLRRmBvHIFTA3mR0xFDK4KpfYze0zB8v+CaBBJqPX4qMxgaOpqBurjvzdFFs/JBwkbKbv8VZZlDyKgZVYrIQ1/2Vr7O1HA2DljY1rjsgZTBo2mJ/8m0mC09GnxO88zSSxZNmQpkpLPafb6NiIUAtUeDIALY9OoxTpANEphp+TAL6sKihV4mdecXsu+QUbV+6U6cTu+h+yb/+tTzPtwhf37hiARSjg2f1s4preyTwVdmoPIvUM5YlrZmGsbamDjNOuj/3CLPyods8Xb4xcs1ewwIrwKnKiSfWY=
